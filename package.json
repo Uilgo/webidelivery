@@ -17,19 +17,6 @@
 		"fix": "pnpm run format && pnpm run lint:fix",
 		"typecheck": "nuxt typecheck"
 	},
-	"dependencies": {
-		"@nuxt/eslint": "1.15.2",
-		"@nuxt/fonts": "0.14.0",
-		"@nuxt/icon": "2.2.1",
-		"@nuxt/image": "2.0.0",
-		"@nuxtjs/color-mode": "^4.0.0",
-		"@pinia/nuxt": "0.11.3",
-		"@vueuse/nuxt": "14.2.1",
-		"nuxt": "^4.4.2",
-		"vue": "^3.5.32",
-		"vue-router": "^5.0.4",
-		"zod": "^4.3.6"
-	},
 	"lint-staged": {
 		"*.{js,ts}": [
 			"eslint --fix",
@@ -41,6 +28,22 @@
 		"*.{css,scss,html,json,md}": [
 			"prettier --write"
 		]
+	},
+	"dependencies": {
+		"@nuxt/eslint": "1.15.2",
+		"@nuxt/fonts": "0.14.0",
+		"@nuxt/icon": "2.2.1",
+		"@nuxt/image": "2.0.0",
+		"@nuxtjs/color-mode": "^4.0.0",
+		"@nuxtjs/supabase": "^2.0.5",
+		"@pinia/nuxt": "0.11.3",
+		"@vueuse/core": "^14.2.1",
+		"@vueuse/nuxt": "14.2.1",
+		"browser-image-compression": "^2.0.2",
+		"nuxt": "^4.4.2",
+		"vue": "^3.5.32",
+		"vue-router": "^5.0.4",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@iconify-json/lucide": "^1.2.102",

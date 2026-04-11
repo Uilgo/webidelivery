@@ -5,6 +5,7 @@ export default defineNuxtConfig({
 	compatibilityDate: "2025-07-15",
 	devtools: { enabled: false },
 	modules: [
+		"@nuxtjs/supabase",
 		"@pinia/nuxt",
 		"@nuxt/eslint",
 		"@nuxt/icon",
@@ -46,6 +47,47 @@ export default defineNuxtConfig({
 				{ rel: "canonical", href: "https://webidelivery.com.br" },
 			],
 		},
+	},
+
+	// Configuração do Supabase
+	supabase: {
+		// Permite acesso à sessão no servidor via cookies
+		useSsrCookies: true,
+		// Redirecionamento automático ativado
+		redirect: true,
+		// Configuração de rotas de redirecionamento
+		redirectOptions: {
+			login: "/login", // Página de login padrão (Admin Loja)
+			callback: "/confirm", // Página de confirmação após signup/OAuth
+			exclude: [
+				// Rotas públicas - Home e Cardápio
+
+				"/:slug(.*)", // Cardápio público (qualquer slug)
+				"/pedido/:codigo", // Rastreamento de pedido (guest)
+
+				// Rotas de autenticação - Admin Loja
+				"/login",
+				"/signup",
+				"/forgot-password",
+				"/first-access", // Troca de senha temporária
+				"/confirm", // Callback do Supabase
+
+				// Rotas de autenticação - Plataforma (Master/Whitelabel)
+				"/plataforma/login",
+				"/plataforma/signup",
+				"/plataforma/forgot-password",
+
+				// Rotas legais (públicas)
+				"/termos",
+				"/privacidade",
+				"/plataforma/termos",
+				"/plataforma/privacidade",
+			],
+			include: undefined, // Todas as rotas exceto as do exclude
+			saveRedirectToCookie: false, // Não salvar - sempre vai pro dashboard apropriado
+		},
+		// Path para tipos TypeScript gerados do schema do Supabase
+		types: "~~/shared/types/database.ts",
 	},
 
 	// Configuração do Color Mode (system/dark/light)
