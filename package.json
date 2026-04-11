@@ -1,0 +1,58 @@
+{
+	"name": "webidelivery",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"prepare": "husky install",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"check": "pnpm run format:check && pnpm run lint && pnpm run typecheck",
+		"fix": "pnpm run format && pnpm run lint:fix",
+		"typecheck": "nuxt typecheck"
+	},
+	"dependencies": {
+		"@nuxt/eslint": "1.15.2",
+		"@nuxt/fonts": "0.14.0",
+		"@nuxt/icon": "2.2.1",
+		"@nuxt/image": "2.0.0",
+		"@nuxtjs/color-mode": "^4.0.0",
+		"@pinia/nuxt": "0.11.3",
+		"@vueuse/nuxt": "14.2.1",
+		"nuxt": "^4.4.2",
+		"vue": "^3.5.32",
+		"vue-router": "^5.0.4",
+		"zod": "^4.3.6"
+	},
+	"lint-staged": {
+		"*.{js,ts}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.vue": [
+			"eslint --fix"
+		],
+		"*.{css,scss,html,json,md}": [
+			"prettier --write"
+		]
+	},
+	"devDependencies": {
+		"@iconify-json/lucide": "^1.2.102",
+		"@tailwindcss/vite": "^4.2.2",
+		"@typescript-eslint/eslint-plugin": "^8.58.1",
+		"@typescript-eslint/parser": "^8.58.1",
+		"husky": "^8.0.0",
+		"lint-staged": "^16.4.0",
+		"prettier": "^3.8.2",
+		"prettier-plugin-tailwindcss": "^0.7.2",
+		"prettier-plugin-vue": "^1.1.6",
+		"tailwindcss": "^4.2.2",
+		"vue-tsc": "^3.2.6"
+	}
+}

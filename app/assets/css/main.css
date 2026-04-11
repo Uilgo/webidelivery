@@ -1,0 +1,508 @@
+@import "tailwindcss";
+@import "./store-theme.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   DESIGN SYSTEM — WebiDelivery
+   ============================================================
+   Paleta de cores semânticas com escalas 50-950.
+   Fonte: Inter (via @nuxt/fonts).
+   Tema light/dark com variáveis CSS + @theme inline do TW4.
+   ============================================================ */
+
+html {
+	overflow-y: auto;
+}
+
+:root {
+	/* ── Primary (Laranja) ─────────────────────────────── */
+	--primary-50: oklch(0.976 0.015 50);
+	--primary-100: oklch(0.938 0.035 50);
+	--primary-200: oklch(0.887 0.075 50);
+	--primary-300: oklch(0.822 0.125 50);
+	--primary-400: oklch(0.758 0.17 48);
+	--primary-500: oklch(0.695 0.2 45); /* padrão */
+	--primary-600: oklch(0.6 0.18 43);
+	--primary-700: oklch(0.5 0.14 40);
+	--primary-800: oklch(0.42 0.11 38);
+	--primary-900: oklch(0.35 0.09 35);
+	--primary-950: oklch(0.25 0.06 35);
+
+	/* ── Secondary (Índigo) ────────────────────────────── */
+	--secondary-50: oklch(0.97 0.014 265);
+	--secondary-100: oklch(0.943 0.03 265);
+	--secondary-200: oklch(0.884 0.06 265);
+	--secondary-300: oklch(0.8 0.105 265);
+	--secondary-400: oklch(0.7 0.16 265);
+	--secondary-500: oklch(0.585 0.21 265); /* padrão */
+	--secondary-600: oklch(0.52 0.22 265);
+	--secondary-700: oklch(0.445 0.195 265);
+	--secondary-800: oklch(0.375 0.16 265);
+	--secondary-900: oklch(0.32 0.127 265);
+	--secondary-950: oklch(0.225 0.098 265);
+
+	/* ── Neutral (Warm Sand) ───────────────────────────── */
+	--neutral-50: oklch(0.99 0.006 95);
+	--neutral-100: oklch(0.969 0.014 95);
+	--neutral-200: oklch(0.929 0.018 95);
+	--neutral-300: oklch(0.869 0.022 95);
+	--neutral-400: oklch(0.704 0.03 95);
+	--neutral-500: oklch(0.554 0.03 95); /* padrão */
+	--neutral-600: oklch(0.446 0.03 95);
+	--neutral-700: oklch(0.373 0.03 95);
+	--neutral-800: oklch(0.279 0.025 95);
+	--neutral-900: oklch(0.227 0.02 95);
+	--neutral-950: oklch(0.129 0.018 95);
+
+	/* ── Success (Verde) ───────────────────────────────── */
+	--success-50: oklch(0.982 0.018 155);
+	--success-100: oklch(0.962 0.044 155);
+	--success-200: oklch(0.925 0.084 155);
+	--success-300: oklch(0.871 0.13 155);
+	--success-400: oklch(0.792 0.172 155);
+	--success-500: oklch(0.723 0.191 155); /* padrão */
+	--success-600: oklch(0.627 0.172 155);
+	--success-700: oklch(0.527 0.14 155);
+	--success-800: oklch(0.448 0.112 155);
+	--success-900: oklch(0.386 0.09 155);
+	--success-950: oklch(0.236 0.06 155);
+
+	/* ── Info (Azul) ───────────────────────────────────── */
+	--info-50: oklch(0.97 0.014 240);
+	--info-100: oklch(0.932 0.032 240);
+	--info-200: oklch(0.882 0.059 240);
+	--info-300: oklch(0.809 0.105 240);
+	--info-400: oklch(0.714 0.155 240);
+	--info-500: oklch(0.623 0.195 240); /* padrão */
+	--info-600: oklch(0.546 0.215 240);
+	--info-700: oklch(0.468 0.19 240);
+	--info-800: oklch(0.395 0.155 240);
+	--info-900: oklch(0.34 0.125 240);
+	--info-950: oklch(0.228 0.09 240);
+
+	/* ── Warning (Âmbar) ──────────────────────────────── */
+	--warning-50: oklch(0.987 0.022 85);
+	--warning-100: oklch(0.962 0.059 85);
+	--warning-200: oklch(0.924 0.12 85);
+	--warning-300: oklch(0.879 0.169 85);
+	--warning-400: oklch(0.828 0.189 75);
+	--warning-500: oklch(0.769 0.188 65); /* padrão */
+	--warning-600: oklch(0.666 0.179 55);
+	--warning-700: oklch(0.555 0.163 50);
+	--warning-800: oklch(0.473 0.137 50);
+	--warning-900: oklch(0.414 0.112 50);
+	--warning-950: oklch(0.279 0.077 50);
+
+	/* ── Error (Vermelho) ─────────────────────────────── */
+	--error-50: oklch(0.971 0.013 17);
+	--error-100: oklch(0.936 0.032 17);
+	--error-200: oklch(0.885 0.062 17);
+	--error-300: oklch(0.808 0.114 17);
+	--error-400: oklch(0.704 0.172 22);
+	--error-500: oklch(0.637 0.208 25); /* padrão */
+	--error-600: oklch(0.577 0.215 27);
+	--error-700: oklch(0.505 0.192 27);
+	--error-800: oklch(0.444 0.16 27);
+	--error-900: oklch(0.396 0.13 25);
+	--error-950: oklch(0.258 0.092 25);
+
+	/* ── Variáveis Padrão ─────────────────────────────── */
+	--primary: var(--primary-500);
+	--secondary: var(--secondary-500);
+	--neutral: var(--neutral-900); /* Invertido: escuro no light */
+	--neutral-foreground: var(--neutral-50);
+	--success: var(--success-500);
+	--info: var(--info-500);
+	--warning: var(--warning-500);
+	--error: var(--error-500);
+
+	/* ── Tokens semânticos (superfície / texto / UI) ──── */
+	--background: var(--neutral-100);
+	--foreground: var(--neutral-950);
+
+	--card: var(--neutral-50);
+	--card-foreground: var(--neutral-950);
+
+	--popover: var(--neutral-50);
+	--popover-foreground: var(--neutral-950);
+
+	--muted: var(--neutral-200);
+	--muted-foreground: var(--neutral-600);
+
+	--accent: var(--neutral-200);
+	--accent-foreground: var(--neutral-900);
+
+	--border: var(--neutral-200);
+	--input: var(--neutral-100); /* Efeito recessed (afundado) dentro do card */
+
+	/* ── Tipografia ───────────────────────────────────── */
+	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+/* -------------------------------------------------------
+   DARK MODE
+   ------------------------------------------------------- */
+.dark {
+	/* ── Variáveis de Cor Invertidas ──────────────────── */
+	--neutral: var(--neutral-50); /* Invertido: claro no dark */
+	--neutral-foreground: var(--neutral-900);
+
+	/* ── Tokens semânticos (superfície / texto / UI) ──── */
+	--background: var(--neutral-950);
+	--foreground: var(--neutral-50);
+
+	--card: var(--neutral-900);
+	--card-foreground: var(--neutral-50);
+
+	--popover: var(--neutral-900);
+	--popover-foreground: var(--neutral-50);
+
+	--muted: var(--neutral-800);
+	--muted-foreground: var(--neutral-400);
+
+	--accent: var(--neutral-800);
+	--accent-foreground: var(--neutral-50);
+
+	--border: var(--neutral-800);
+	--input: var(--neutral-950); /* Fundo mais escuro que o card para destacar os inputs */
+}
+
+/* -------------------------------------------------------
+   THEME — Registra tokens no Tailwind v4
+   Permite usar classes como bg-primary, text-foreground,
+   border-border, etc. diretamente nos templates.
+   ------------------------------------------------------- */
+@theme inline {
+	/* ── Primary ──────────────────────────────────────── */
+	--color-primary-50: var(--primary-50);
+	--color-primary-100: var(--primary-100);
+	--color-primary-200: var(--primary-200);
+	--color-primary-300: var(--primary-300);
+	--color-primary-400: var(--primary-400);
+	--color-primary-500: var(--primary-500);
+	--color-primary-600: var(--primary-600);
+	--color-primary-700: var(--primary-700);
+	--color-primary-800: var(--primary-800);
+	--color-primary-900: var(--primary-900);
+	--color-primary-950: var(--primary-950);
+	--color-primary: var(--primary);
+	--color-primary-foreground: oklch(1 0 0);
+
+	/* ── Secondary ────────────────────────────────────── */
+	--color-secondary-50: var(--secondary-50);
+	--color-secondary-100: var(--secondary-100);
+	--color-secondary-200: var(--secondary-200);
+	--color-secondary-300: var(--secondary-300);
+	--color-secondary-400: var(--secondary-400);
+	--color-secondary-500: var(--secondary-500);
+	--color-secondary-600: var(--secondary-600);
+	--color-secondary-700: var(--secondary-700);
+	--color-secondary-800: var(--secondary-800);
+	--color-secondary-900: var(--secondary-900);
+	--color-secondary-950: var(--secondary-950);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: oklch(1 0 0);
+
+	/* ── Neutral ──────────────────────────────────────── */
+	--color-neutral-50: var(--neutral-50);
+	--color-neutral-100: var(--neutral-100);
+	--color-neutral-200: var(--neutral-200);
+	--color-neutral-300: var(--neutral-300);
+	--color-neutral-400: var(--neutral-400);
+	--color-neutral-500: var(--neutral-500);
+	--color-neutral-600: var(--neutral-600);
+	--color-neutral-700: var(--neutral-700);
+	--color-neutral-800: var(--neutral-800);
+	--color-neutral-900: var(--neutral-900);
+	--color-neutral-950: var(--neutral-950);
+	--color-neutral: var(--neutral);
+	--color-neutral-foreground: var(--neutral-foreground);
+
+	/* ── Success ──────────────────────────────────────── */
+	--color-success-50: var(--success-50);
+	--color-success-100: var(--success-100);
+	--color-success-200: var(--success-200);
+	--color-success-300: var(--success-300);
+	--color-success-400: var(--success-400);
+	--color-success-500: var(--success-500);
+	--color-success-600: var(--success-600);
+	--color-success-700: var(--success-700);
+	--color-success-800: var(--success-800);
+	--color-success-900: var(--success-900);
+	--color-success-950: var(--success-950);
+	--color-success: var(--success);
+	--color-success-foreground: oklch(1 0 0);
+
+	/* ── Info ──────────────────────────────────────────── */
+	--color-info-50: var(--info-50);
+	--color-info-100: var(--info-100);
+	--color-info-200: var(--info-200);
+	--color-info-300: var(--info-300);
+	--color-info-400: var(--info-400);
+	--color-info-500: var(--info-500);
+	--color-info-600: var(--info-600);
+	--color-info-700: var(--info-700);
+	--color-info-800: var(--info-800);
+	--color-info-900: var(--info-900);
+	--color-info-950: var(--info-950);
+	--color-info: var(--info);
+	--color-info-foreground: oklch(1 0 0);
+
+	/* ── Warning ──────────────────────────────────────── */
+	--color-warning-50: var(--warning-50);
+	--color-warning-100: var(--warning-100);
+	--color-warning-200: var(--warning-200);
+	--color-warning-300: var(--warning-300);
+	--color-warning-400: var(--warning-400);
+	--color-warning-500: var(--warning-500);
+	--color-warning-600: var(--warning-600);
+	--color-warning-700: var(--warning-700);
+	--color-warning-800: var(--warning-800);
+	--color-warning-900: var(--warning-900);
+	--color-warning-950: var(--warning-950);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--neutral-950);
+
+	/* ── Error ────────────────────────────────────────── */
+	--color-error-50: var(--error-50);
+	--color-error-100: var(--error-100);
+	--color-error-200: var(--error-200);
+	--color-error-300: var(--error-300);
+	--color-error-400: var(--error-400);
+	--color-error-500: var(--error-500);
+	--color-error-600: var(--error-600);
+	--color-error-700: var(--error-700);
+	--color-error-800: var(--error-800);
+	--color-error-900: var(--error-900);
+	--color-error-950: var(--error-950);
+	--color-error: var(--error);
+	--color-error-foreground: oklch(1 0 0);
+
+	/* ── Tokens semânticos ────────────────────────────── */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+
+	--color-border: var(--border);
+	--color-input: var(--input);
+
+	/* ── Tipografia (Famílias Fontes) ─────────────────── */
+	--font-sans: var(--font-sans);
+	--font-mono: var(--font-mono);
+
+	/* ── Tipografia (Tamanhos de Fonte) base = 16px ───── */
+	--text-xs: 0.75rem; /* 12px - Textos de apoio, hints, H6 */
+	--text-sm: 0.875rem; /* 14px - Textos secundários, H5 */
+	--text-base: 1rem; /* 16px - Corpo principal, H4 */
+	--text-lg: 1.125rem; /* 18px - Destaques, H3 */
+	--text-xl: 1.25rem; /* 20px - Títulos de subtópicos/cards, H2 */
+	--text-2xl: 1.5rem; /* 24px - Títulos de página de painel, H1 */
+	--text-3xl: 1.875rem; /* 30px - Indicadores, números grandes */
+	--text-4xl: 2.25rem; /* 36px - Displays maiores */
+	--text-5xl: 3rem; /* 48px - Displays hero (se precisar no futuro) */
+	--text-6xl: 3.75rem; /* 60px - Displays hero */
+
+	/* ── Border radius (4, 6, 8, 12, 16, 20, 24, full) ─ */
+	--radius-xs: 4px;
+	--radius-sm: 6px;
+	--radius: 8px; /* padrão (classe `rounded`) */
+	--radius-md: 12px;
+	--radius-lg: 16px;
+	--radius-xl: 20px;
+	--radius-2xl: 24px;
+	--radius-full: 9999px;
+}
+
+/* -------------------------------------------------------
+   BASE — Estilos globais aplicados a todos os elementos
+   ------------------------------------------------------- */
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground antialiased;
+		font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+	}
+	/* Remove outline/focus ring globalmente */
+	*:focus,
+	*:focus-visible {
+		outline: none !important;
+	}
+
+	/* Tags de Texto Hierárquicos Globais padrão (Perfil UI/Dashboard) */
+	h1 {
+		@apply text-2xl font-bold tracking-tight;
+	} /* 24px */
+	h2 {
+		@apply text-xl font-bold tracking-tight;
+	} /* 20px */
+	h3 {
+		@apply text-lg font-semibold tracking-tight;
+	} /* 18px */
+	h4 {
+		@apply text-base font-semibold tracking-tight;
+	} /* 16px */
+	h5 {
+		@apply text-sm font-semibold;
+	} /* 14px */
+	h6 {
+		@apply text-muted-foreground text-xs font-semibold tracking-wider uppercase;
+	} /* 12px */
+	p {
+		@apply text-base leading-relaxed;
+	}
+	small {
+		@apply text-xs;
+	}
+
+	/* ── Custom Scrollbar (Modern & Discrete) ── */
+	::-webkit-scrollbar {
+		width: 5px;
+		height: 5px;
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		@apply bg-muted-foreground/30 rounded-full;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-muted-foreground/50;
+	}
+}
+
+/* ============================================================
+   UTILITÁRIOS GLOBAIS
+   ============================================================ */
+
+/* Garante que todos os ícones do @nuxt/icon fiquem alinhados corretamente */
+.iconify {
+	display: block;
+	flex-shrink: 0;
+}
+
+/* Ícones dentro do wrapper do UiInput — tamanho fixo 20px */
+.ui-input-wrapper .iconify {
+	width: 20px !important;
+	height: 20px !important;
+}
+
+/* Ícones dentro do UiButton — tamanho fixo 16px */
+.ui-button .iconify {
+	width: 20px !important;
+	height: 20px !important;
+}
+
+/* -------------------------------------------------------
+   CURSORES
+------------------------------------------------------- */
+
+/* Clicáveis → pointer */
+button,
+[role="button"],
+a,
+summary {
+	cursor: pointer;
+}
+
+/* Campos de texto → text */
+input,
+textarea {
+	cursor: text;
+}
+
+/* Checkboxes e radios → pointer */
+input[type="checkbox"],
+input[type="radio"] {
+	cursor: pointer;
+}
+
+/* Desabilitados → not-allowed */
+button:disabled,
+input:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+	cursor: not-allowed;
+}
+
+/* Wrapper do input desabilitado propaga not-allowed para ícones filhos */
+.ui-input-wrapper:has(input:disabled) {
+	cursor: not-allowed;
+}
+
+/* ============================================================
+   LAYOUTS — Sidebar & Header (Admin Loja + Plataforma)
+   ============================================================ */
+
+/* Transição suave do sidebar (apenas width) */
+.sidebar-transition {
+	transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Transição de opacidade dos textos/labels */
+.sidebar-item-transition {
+	transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Item do menu — padding-left fixo para centralizar ícone quando colapsado
+   Cálculo: (80px sidebar - 24px ícone) / 2 - 8px padding nav = 20px */
+.sidebar-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding-left: 1.25rem; /* 20px */
+}
+
+.sidebar-item-icon {
+	flex-shrink: 0;
+	width: 1.5rem; /* 24px */
+	height: 1.5rem; /* 24px */
+}
+
+.sidebar-item-text {
+	margin-left: 0.75rem; /* 12px */
+	white-space: nowrap;
+}
+
+/* Header do sidebar — centraliza logo (48px / h-12 w-12) quando colapsado
+   Cálculo: (80px - 48px) / 2 = 16px */
+.sidebar-header {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding-left: 1rem; /* 16px */
+	padding-right: 1rem; /* 16px */
+}
+
+/* Footer do sidebar — centraliza avatar (40px / size-md) quando colapsado
+   Largura disponível: 80px - 8px (p-2 left) - 8px (p-2 right) = 64px
+   Centralização: (64 - 40) / 2 = 12px */
+.sidebar-footer-btn {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding-left: 0.75rem; /* 12px */
+	padding-right: 0.75rem; /* 12px */
+}
+
+/* Transição do header — sincronizada com sidebar (500ms) */
+.header-transition {
+	transition:
+		left 500ms cubic-bezier(0.4, 0, 0.2, 1),
+		right 500ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}

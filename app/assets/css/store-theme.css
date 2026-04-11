@@ -1,0 +1,421 @@
+/***
+ * 🎨 Tema Personalizável do Estabelecimento - WebiDelivery
+ *
+ * Sistema de cores customizáveis para admin_loja.
+ * O admin define apenas 4 cores principais, e o sistema calcula
+ * automaticamente 20+ cores derivadas usando CSS color-mix.
+ *
+ * ========================================
+ * COMO FUNCIONA
+ * ========================================
+ *
+ * 1. Admin da Loja define 4 cores principais via painel:
+ *    - Primary (cor da marca)
+ *    - Secondary (cor de superfícies/cards)
+ *    - Background (cor de fundo)
+ *    - Text (cor do texto)
+ *
+ * 2. O sistema calcula automaticamente 20+ cores derivadas via CSS:
+ *    - Bordas (4% contraste)
+ *    - Hover (9% contraste)
+ *    - Active (15% contraste)
+ *    - Texto muted (40% transparência)
+ *    - Primary light (85% transparência)
+ *    - Primary hover (10% mais escuro)
+ *    - Primary active (20% mais escuro)
+ *
+ * 3. Cores adaptativas calculadas via JavaScript:
+ *    - Sombras (light/dark baseado em luminosidade)
+ *    - Texto sobre cores (branco/preto com WCAG AA)
+ *    - Ring/outline adaptativo
+ *
+ * 4. As cores são salvas no banco de dados (lojas.config_tema)
+ *
+ * 5. Ao carregar o cardápio público (/{slug}), o composable
+ *    `useStoreTheme` aplica as cores dinamicamente
+ *
+ * ========================================
+ * PERSISTÊNCIA NO BANCO DE DADOS
+ * ========================================
+ *
+ * UPDATE lojas
+ * SET config_tema = '{
+ *   "cor_primaria": "#F97316",
+ *   "cor_secundaria": "#1e293b",
+ *   "cor_fundo": "#ffffff",
+ *   "cor_texto": "#1e293b"
+ * }'
+ * WHERE id = 'loja-id';
+ *
+ * ========================================
+ * APLICAÇÃO NO CARDÁPIO PÚBLICO
+ * ========================================
+ *
+ * // pages/[slug].vue
+ * <script setup lang="ts">
+ * const route = useRoute();
+ * const slug = route.params.slug as string;
+ *
+ * // Buscar configuração de tema da loja
+ * const { data: loja } = await useFetch(`/api/lojas/${slug}`);
+ *
+ * // Aplicar tema
+ * if (loja.value?.config_tema) {
+ *   const { applyTheme } = useStoreTheme(loja.value.id);
+ *   applyTheme(loja.value.config_tema);
+ * }
+ * </script>
+ *
+ * <template>
+ *   <div class="store-theme store-theme-bridge">
+ *     <!-- Conteúdo do cardápio -->
+ *   </div>
+ * </template>
+ */
+
+/* =========================================
+   TEMA PERSONALIZÁVEL DO ESTABELECIMENTO
+   Sistema de cores customizáveis para admin_loja
+   ========================================= */
+
+.store-theme {
+	/* ============= DEFAULTS (Evitar FOUC durante SSR) ============= */
+	/* Fallback: Azul Noturno (dark) — aplicado quando config_tema está vazio */
+	--default-store-primary: #3b82f6;
+	--default-store-secondary: #1e293b;
+	--default-store-background: #0f172a;
+	--default-store-text: #f1f5f9;
+
+	/* ============= CORES CONFIGURÁVEIS PELO ADMIN_LOJA ============= */
+	/* O admin_loja define apenas 4 cores principais via painel */
+	--store-primary: var(--store-cor-primaria, var(--default-store-primary));
+	--store-secondary: var(--store-cor-secundaria, var(--default-store-secondary));
+	--store-background: var(--store-cor-fundo, var(--default-store-background));
+	--store-text: var(--store-cor-texto, var(--default-store-text));
+
+	/* Raio de borda customizável */
+	--store-radius: var(--store-border-radius, var(--radius-md));
+
+	/* ============= CORES DERIVADAS AUTOMATICAMENTE (CSS color-mix) ============= */
+
+	/* Bordas - 4% de contraste com o texto */
+	--store-border: var(
+		--store-cor-border,
+		color-mix(in srgb, var(--store-secondary), var(--store-text) 4%)
+	);
+
+	/* Hover - 9% de contraste com o texto */
+	--store-hover: var(
+		--store-cor-hover,
+		color-mix(in srgb, var(--store-secondary), var(--store-text) 9%)
+	);
+
+	/* Active - 15% de contraste */
+	--store-active: var(
+		--store-cor-active,
+		color-mix(in srgb, var(--store-secondary), var(--store-text) 15%)
+	);
+
+	/* Texto secundário - 60% opacidade visual */
+	--store-text-muted: var(
+		--store-cor-text-muted,
+		color-mix(in srgb, var(--store-text), transparent 40%)
+	);
+
+	/* Texto desabilitado - 70% opacidade */
+	--store-text-disabled: var(
+		--store-cor-text-disabled,
+		color-mix(in srgb, var(--store-text), transparent 70%)
+	);
+
+	/* Primary light - 85% transparência */
+	--store-primary-light: var(
+		--store-cor-primary-light,
+		color-mix(in srgb, var(--store-primary), transparent 85%)
+	);
+
+	/* Primary hover - 10% mais escuro */
+	--store-primary-hover: var(
+		--store-cor-primary-hover,
+		color-mix(in srgb, var(--store-primary), black 10%)
+	);
+
+	/* Primary active - 20% mais escuro */
+	--store-primary-active: var(
+		--store-cor-primary-active,
+		color-mix(in srgb, var(--store-primary), black 20%)
+	);
+
+	/* ============= CORES ADAPTATIVAS (Calculadas via JS) ============= */
+	/* Essas variáveis são injetadas via JavaScript baseado em luminosidade */
+
+	/* Sombras adaptativas (light/dark) */
+	--store-shadow: var(--store-cor-shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
+	--store-shadow-hover: var(--store-cor-shadow-hover, 0 4px 12px rgba(0, 0, 0, 0.12));
+	--store-card-shadow: var(--store-cor-card-shadow, 0 1px 4px rgba(0, 0, 0, 0.06));
+	--store-card-shadow-hover: var(--store-cor-card-shadow-hover, 0 4px 16px rgba(0, 0, 0, 0.1));
+	--store-button-shadow: var(--store-cor-button-shadow, 0 2px 8px rgba(0, 0, 0, 0.15));
+	--store-button-shadow-hover: var(--store-cor-button-shadow-hover, 0 4px 16px rgba(0, 0, 0, 0.2));
+
+	/* Texto sobre cores (branco ou preto baseado em contraste WCAG AA) */
+	--store-primary-foreground: var(--store-cor-primary-foreground, #ffffff);
+	--store-secondary-foreground: var(--store-cor-secondary-foreground, var(--store-text));
+
+	/* Ring/outline adaptativo */
+	--store-ring: var(--store-cor-ring, var(--store-primary));
+
+	/* Overlay adaptativo */
+	--store-overlay: var(--store-cor-overlay, rgba(0, 0, 0, 0.5));
+
+	/* Glassmorphism */
+	--store-glass-bg: var(
+		--store-cor-glass-bg,
+		color-mix(in srgb, var(--store-secondary), transparent 20%)
+	);
+	--store-glass-border: var(
+		--store-cor-glass-border,
+		color-mix(in srgb, var(--store-border), transparent 50%)
+	);
+
+	/* ============= CORES SEMÂNTICAS (Herdam do sistema global) ============= */
+	--store-success: var(--store-cor-success, var(--success));
+	--store-success-light: var(--store-cor-success-light, var(--success-100));
+	--store-success-foreground: var(--store-cor-success-foreground, #ffffff);
+	--store-warning: var(--store-cor-warning, var(--warning));
+	--store-warning-light: var(--store-cor-warning-light, var(--warning-100));
+	--store-warning-foreground: var(--store-cor-warning-foreground, var(--neutral-950));
+	--store-error: var(--store-cor-error, var(--error));
+	--store-error-light: var(--store-cor-error-light, var(--error-100));
+	--store-error-foreground: var(--store-cor-error-foreground, #ffffff);
+	--store-info: var(--store-cor-info, var(--info));
+	--store-info-light: var(--store-cor-info-light, var(--info-100));
+	--store-info-foreground: var(--store-cor-info-foreground, #ffffff);
+}
+
+/* ============= CLASSES UTILITÁRIAS DO TEMA PERSONALIZADO ============= */
+
+/* Backgrounds */
+.store-bg-primary {
+	background-color: var(--store-primary);
+}
+.store-bg-secondary {
+	background-color: var(--store-secondary);
+}
+.store-bg-surface {
+	background-color: var(--store-background);
+}
+.store-bg-hover {
+	background-color: var(--store-hover);
+}
+.store-bg-active {
+	background-color: var(--store-active);
+}
+
+/* Texto */
+.store-text-primary {
+	color: var(--store-primary);
+}
+.store-text-content {
+	color: var(--store-text);
+}
+.store-text-muted {
+	color: var(--store-text-muted);
+}
+.store-text-on-primary {
+	color: var(--store-primary-foreground);
+}
+
+/* Bordas */
+.store-border {
+	border-color: var(--store-border);
+}
+.store-border-primary {
+	border-color: var(--store-primary);
+}
+
+/* Raio de borda */
+.store-rounded {
+	border-radius: var(--store-radius);
+}
+
+/* ============= COMPONENTES DO TEMA PERSONALIZADO ============= */
+
+/* Card personalizado */
+.store-card {
+	background-color: var(--store-secondary);
+	border: 1px solid var(--store-border);
+	box-shadow: var(--store-card-shadow);
+	border-radius: var(--store-radius);
+	transition: all 0.2s ease;
+}
+.store-card:hover {
+	box-shadow: var(--store-card-shadow-hover);
+	border-color: var(--store-hover);
+}
+
+/* Botão primary personalizado */
+.store-btn-primary {
+	background-color: var(--store-primary);
+	color: var(--store-primary-foreground);
+	box-shadow: var(--store-button-shadow);
+	border-radius: var(--store-radius);
+	transition: all 0.2s ease;
+}
+.store-btn-primary:hover:not(:disabled) {
+	background-color: var(--store-primary-hover);
+	box-shadow: var(--store-button-shadow-hover);
+}
+.store-btn-primary:active:not(:disabled) {
+	background-color: var(--store-primary-active);
+}
+
+/* Botão outline personalizado */
+.store-btn-outline {
+	background-color: transparent;
+	color: var(--store-primary);
+	border: 2px solid var(--store-primary);
+	border-radius: var(--store-radius);
+	transition: all 0.2s ease;
+}
+.store-btn-outline:hover:not(:disabled) {
+	background-color: var(--store-primary-light);
+}
+
+/* Input personalizado */
+.store-input {
+	background-color: var(--store-secondary);
+	border: 1px solid var(--store-border);
+	color: var(--store-text);
+	border-radius: var(--store-radius);
+	transition: all 0.2s ease;
+}
+.store-input:hover:not(:disabled) {
+	border-color: var(--store-hover);
+}
+.store-input:focus {
+	outline: none;
+	border-color: var(--store-primary);
+	box-shadow: 0 0 0 3px var(--store-primary-light);
+}
+
+/* Badge personalizado */
+.store-badge {
+	background-color: var(--store-primary-light);
+	color: var(--store-primary);
+	border-radius: var(--store-radius);
+}
+.store-badge-solid {
+	background-color: var(--store-primary);
+	color: var(--store-primary-foreground);
+	border-radius: var(--store-radius);
+}
+
+/* Glassmorphism */
+.store-glass {
+	background-color: var(--store-glass-bg);
+	border: 1px solid var(--store-glass-border);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+}
+
+/* ============= PONTE DE TEMA (THEME BRIDGE) ============= */
+/*
+ * Permite que componentes globais (UiInput, UiButton, UiModal, etc.)
+ * usem automaticamente o tema da loja quando dentro de .store-theme-bridge.
+ * Aplicar em: modais, drawers, bottom sheets, e qualquer componente
+ * que renderize fora do contexto da página do cardápio.
+ */
+.store-theme-bridge {
+	/* Superfícies e Fundos */
+	--background: var(--store-background);
+	--card: var(--store-secondary);
+	--muted: var(--store-hover);
+	--accent: var(--store-hover);
+
+	/* Textos */
+	--foreground: var(--store-text);
+	--card-foreground: var(--store-text);
+	--muted-foreground: var(--store-text-muted);
+	--accent-foreground: var(--store-text);
+	--popover-foreground: var(--store-text);
+
+	/* Bordas */
+	--border: var(--store-border);
+	--input: var(--store-secondary);
+	--color-input: var(--store-secondary);
+
+	/* Cores de Ação */
+	--primary: var(--store-primary);
+	--primary-foreground: var(--store-primary-foreground);
+
+	/* Popover / Dropdown */
+	--popover: var(--store-secondary);
+	--popover-foreground: var(--store-text);
+	--card: var(--store-secondary);
+	--card-foreground: var(--store-text);
+
+	/* Ring */
+	--ring: var(--store-ring);
+}
+
+/* ============= OVERRIDE DE COMPONENTES UI DENTRO DO TEMA DA LOJA ============= */
+/*
+ * Força os componentes do design system (UiInput, UiButton, etc.)
+ * a usarem as cores do tema da loja quando dentro de .store-theme ou .store-theme-bridge.
+ * Necessário porque o Tailwind v4 compila bg-input, bg-card, etc. como referências
+ * estáticas a --color-* que não são reativas a mudanças de CSS vars em runtime.
+ */
+
+.store-theme .ui-input-wrapper,
+.store-theme-bridge .ui-input-wrapper {
+	background-color: var(--store-secondary) !important;
+	border-color: var(--store-border) !important;
+	color: var(--store-text) !important;
+}
+
+.store-theme .ui-input-wrapper input,
+.store-theme-bridge .ui-input-wrapper input {
+	color: var(--store-text) !important;
+}
+
+.store-theme .ui-input-wrapper input::placeholder,
+.store-theme-bridge .ui-input-wrapper input::placeholder {
+	color: var(--store-text-muted) !important;
+}
+
+.store-theme .ui-input-wrapper .iconify,
+.store-theme-bridge .ui-input-wrapper .iconify {
+	color: var(--store-text-muted) !important;
+}
+
+/* Tema 1: Laranja Vibrante (Light) */
+.store-theme-preset-orange-light {
+	--store-cor-primaria: #f97316;
+	--store-cor-secundaria: #fef3e2;
+	--store-cor-fundo: #fffbf5;
+	--store-cor-texto: #3d3935;
+}
+
+/* Tema 2: Vermelho Elegante (Light) */
+.store-theme-preset-red-light {
+	--store-cor-primaria: #dc2626;
+	--store-cor-secundaria: #fef2f2;
+	--store-cor-fundo: #fffbfb;
+	--store-cor-texto: #3d3535;
+}
+
+/* Tema 3: Azul Noturno (Dark) */
+.store-theme-preset-blue-dark {
+	--store-cor-primaria: #3b82f6;
+	--store-cor-secundaria: #1e293b;
+	--store-cor-fundo: #0f172a;
+	--store-cor-texto: #f1f5f9;
+}
+
+/* Tema 4: Verde Moderno (Dark) */
+.store-theme-preset-green-dark {
+	--store-cor-primaria: #10b981;
+	--store-cor-secundaria: #1e3a32;
+	--store-cor-fundo: #0f1f1a;
+	--store-cor-texto: #f0f9f4;
+}

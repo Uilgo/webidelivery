@@ -1,0 +1,181 @@
+# ============================================
+# Nuxt 4 - WebiDelivery SaaS White Label
+# ============================================
+
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Deployment platforms
+.vercel
+.netlify
+.firebase/
+
+# Node dependencies
+node_modules
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# Package Managers
+# ============================================
+
+# pnpm
+.pnpm-debug.log*
+pnpm-debug.log*
+
+# npm
+package-lock.json
+npm-debug.log*
+
+# yarn
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+.yarn/
+.yarn-integrity
+
+# ============================================
+# Logs
+# ============================================
+logs
+*.log
+lerna-debug.log*
+
+# ============================================
+# Operating System Files
+# ============================================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+*.icloud
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# IDEs and Editors
+# ============================================
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Fleet
+.fleet
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Qoder
+.qoder
+
+# ============================================
+# Testing
+# ============================================
+coverage
+*.lcov
+.nyc_output
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ============================================
+# Build & Deployment
+# ============================================
+*.tsbuildinfo
+.turbo
+.contentlayer
+.next
+.docusaurus
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.temp
+*.bak
+.temp/
+.tmp/
+.lock-wscript
+.nib
+
+# ============================================
+# Database & Supabase
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+supabase/.branches/
+supabase/.temp/
+
+# ============================================
+# Kiro IDE
+# ============================================
+
+# Ignorar configurações pessoais e cache
+.kiro/settings/
+.kiro/cache/
+.kiro/logs/
+.kiro/.temp/
+
+# Manter regras de steering (documentação do projeto)
+!.kiro/steering/
+
+# ============================================
+# Misc
+# ============================================
+.contentlayer
