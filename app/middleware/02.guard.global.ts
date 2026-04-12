@@ -97,13 +97,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
 		return navigateTo("/login", { replace: true });
 	}
 
-	// Carrega preferências se ainda não carregadas (fire-and-forget — não bloqueia navegação)
+	// Carrega preferências uma vez por sessão (fire-and-forget — não bloqueia navegação)
 	if (import.meta.client) {
 		const { usePreferencesStore } = await import("~/stores/preferencesStore");
 		const preferencesStore = usePreferencesStore();
-		if (!preferencesStore.carregando) {
-			void preferencesStore.carregarPreferences(user.value.id);
-		}
+		void preferencesStore.carregarPreferences(user.value.id);
 	}
 
 	const cargo = perfilStore.cargo!;

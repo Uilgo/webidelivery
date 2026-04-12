@@ -102,13 +102,10 @@ export const usePerfilStore = defineStore("perfil", () => {
 	// ─── Actions ──────────────────────────────────────────────────────────────
 
 	async function fetchPerfil(userId?: string): Promise<void> {
-		const rawUser = user.value;
-		let id = userId ?? rawUser?.id;
-
-		if (!id && rawUser && typeof rawUser === "object" && "sub" in rawUser) {
-			const sub = (rawUser as Record<string, unknown>).sub;
-			if (typeof sub === "string") id = sub;
-		}
+		// v2: useSupabaseUser() retorna JWT claims — o id está em .sub
+		const claims = user.value;
+		const claimsId = (claims as Record<string, unknown> | null)?.sub as string | undefined;
+		const id = userId ?? claimsId;
 
 		if (!id) {
 			console.warn("[perfilStore] fetchPerfil chamado sem ID. Abortando.");

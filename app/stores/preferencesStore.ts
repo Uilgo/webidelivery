@@ -29,6 +29,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 
 	const carregando = ref(false);
 	const sincronizando = ref(false);
+	const jaCarregado = ref(false); // evita recarregar em cada navegação
 
 	// ─── Computed ─────────────────────────────────────────────────────────────
 
@@ -62,16 +63,14 @@ export const usePreferencesStore = defineStore("preferences", () => {
 	// ─── Actions ──────────────────────────────────────────────────────────────
 
 	async function carregarPreferences(userId?: string): Promise<void> {
+		if (jaCarregado.value) return; // já carregado nesta sessão
 		carregando.value = true;
 
 		try {
-			// Resolve userId
-			const rawUser = useSupabaseUser().value;
-			let id = userId ?? rawUser?.id;
-			if (!id && rawUser && typeof rawUser === "object" && "sub" in rawUser) {
-				const sub = (rawUser as Record<string, unknown>).sub;
-				if (typeof sub === "string") id = sub;
-			}
+			// v2: useSupabaseUser() retorna JWT claims — o id está em .sub
+			const claims = useSupabaseUser().value;
+			const claimsId = (claims as Record<string, unknown> | null)?.sub as string | undefined;
+			const id = userId ?? claimsId;
 
 			// Busca preferencias do perfil no banco (fonte de verdade)
 			if (id) {
@@ -101,17 +100,21 @@ export const usePreferencesStore = defineStore("preferences", () => {
 			console.error("[preferencesStore] Erro ao carregar preferências:", e);
 		} finally {
 			carregando.value = false;
+			jaCarregado.value = true;
 		}
 	}
 
 	async function sincronizarComBanco(prefs: PreferenciasUsuario): Promise<void> {
+		// RPC requer auth.uid() — só funciona no cliente com sessão ativa
+		if (import.meta.server) return;
 		if (sincronizando.value) return;
 		sincronizando.value = true;
 
 		try {
 			const supabase = useSupabaseClient();
-			const rawUser = useSupabaseUser().value;
-			const id = rawUser?.id;
+			// v2: useSupabaseUser() retorna JWT claims — o id está em .sub
+			const claims = useSupabaseUser().value;
+			const id = (claims as Record<string, unknown> | null)?.sub as string | undefined;
 			if (!id) return;
 
 			const params: RpcAtualizarPreferenciasParams = {
@@ -119,7 +122,8 @@ export const usePreferencesStore = defineStore("preferences", () => {
 				p_preferencias: prefs as unknown as Record<string, unknown>,
 			};
 
-			await supabase.rpc("fn_rpc_atualizar_preferencias", params as never);
+			const { error } = await supabase.rpc("fn_rpc_atualizar_preferencias", params as never);
+			if (error) console.error("[preferencesStore] Erro no RPC:", error);
 		} catch (e: unknown) {
 			console.error("[preferencesStore] Erro ao sincronizar:", e);
 		} finally {

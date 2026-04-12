@@ -41,8 +41,10 @@ const route = useRoute();
 watch(
 	() => route.path,
 	() => {
-		if (import.meta.client && window.innerWidth < 768) {
+		if (import.meta.client && window.innerWidth < 768 && sidebarOpen.value) {
 			sidebarOpen.value = false;
+			sidebarCookie.value = false;
+			preferencesStore.setSidebarCollapsed(true);
 		}
 	},
 );
@@ -65,7 +67,7 @@ const mainMarginLeft = computed(() => (sidebarOpen.value ? HEADER_LEFT_OPEN : HE
 		<div
 			class="admin-overlay fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
 			:class="sidebarOpen ? 'admin-overlay--open' : ''"
-			@click="sidebarOpen = false"
+			@click="toggleSidebar"
 		></div>
 
 		<!-- Sidebar -->

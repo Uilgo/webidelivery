@@ -72,8 +72,9 @@ export const useNotificacoesStore = defineStore("notificacoes", () => {
 
 		try {
 			const supabase = useSupabaseClient();
-			const rawUser = useSupabaseUser().value;
-			const id = rawUser?.id;
+			// v2: useSupabaseUser() retorna JWT claims — o id está em .sub
+			const claims = useSupabaseUser().value;
+			const id = (claims as Record<string, unknown> | null)?.sub as string | undefined;
 			if (!id) return;
 
 			const params: RpcMarcarTodasLidasParams = { perfil_id: id };

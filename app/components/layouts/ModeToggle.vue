@@ -6,7 +6,10 @@
  * Fecha ao clicar fora (onClickOutside via @vueuse/core).
  */
 
+import { usePreferencesStore } from "~/stores/preferencesStore";
+
 const colorMode = useColorMode();
+const preferencesStore = usePreferencesStore();
 const open = ref(false);
 const containerRef = ref<HTMLElement | null>(null);
 
@@ -26,6 +29,7 @@ const current = computed<Option>(
 
 function select(value: Option["value"]) {
 	colorMode.preference = value;
+	preferencesStore.setTheme(value);
 	open.value = false;
 }
 </script>
