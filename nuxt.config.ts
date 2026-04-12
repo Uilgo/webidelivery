@@ -195,6 +195,7 @@ export default defineNuxtConfig({
 					"~~/*": ["./*"],
 				},
 			},
+			exclude: ["app/antigo"],
 		},
 	},
 });

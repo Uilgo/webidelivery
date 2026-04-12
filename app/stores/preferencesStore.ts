@@ -12,38 +12,10 @@
  */
 
 import type { RpcAtualizarPreferenciasParams } from "~~/shared/types/rpc/core";
-import type { Perfil } from "~~/shared/types/database/core";
+import type { Perfil, PreferenciasUsuario } from "~~/shared/types/database/core";
+import { DEFAULT_PREFERENCES, isValidPreferences } from "~~/shared/constants/preferences";
 
 const COOKIE_KEY = "webi-preferences";
-
-export interface PreferenciasUsuario {
-	theme: "light" | "dark" | "system";
-	sidebar_collapsed: boolean;
-	dashboard_layout: "grid" | "list";
-	items_per_page: number;
-	timezone: string;
-	locale: string;
-}
-
-const DEFAULT_PREFERENCES: PreferenciasUsuario = {
-	theme: "system",
-	sidebar_collapsed: false,
-	dashboard_layout: "grid",
-	items_per_page: 20,
-	timezone: "America/Sao_Paulo",
-	locale: "pt-BR",
-};
-
-function isValidPreferences(value: unknown): value is PreferenciasUsuario {
-	if (!value || typeof value !== "object") return false;
-	const v = value as Record<string, unknown>;
-	return (
-		typeof v.theme === "string" &&
-		typeof v.sidebar_collapsed === "boolean" &&
-		typeof v.dashboard_layout === "string" &&
-		typeof v.items_per_page === "number"
-	);
-}
 
 export const usePreferencesStore = defineStore("preferences", () => {
 	// ─── Estado ───────────────────────────────────────────────────────────────

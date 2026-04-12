@@ -26,6 +26,34 @@ export interface Role {
 }
 
 // =============================================
+// JSONB: preferencias (campo de perfis)
+// =============================================
+
+/** Tipagem do JSONB `preferencias` da tabela `perfis` */
+export interface PreferenciasUsuario {
+	/** Timezone IANA (ex: "America/Sao_Paulo") */
+	timezone?: string;
+	/** Locale BCP 47 (ex: "pt-BR") */
+	locale?: string;
+	/** Moeda preferida (ex: "BRL") */
+	currency?: string;
+	/** Tema da interface */
+	theme?: "light" | "dark" | "system";
+	/** Sidebar colapsada */
+	sidebar_collapsed?: boolean;
+	/** Notificações habilitadas */
+	notifications_enabled?: boolean;
+	/** Som de notificações habilitado */
+	sound_enabled?: boolean;
+	/** Layout do dashboard */
+	dashboard_layout?: "grid" | "list";
+	/** Itens por página em tabelas */
+	items_per_page?: number;
+	/** Outras preferências customizadas */
+	[key: string]: unknown;
+}
+
+// =============================================
 // TABELA: perfis (espelho de auth.users)
 // =============================================
 
@@ -48,7 +76,7 @@ export interface Perfil {
 	ultimo_acesso_em: string | null;
 	termos_aceitos_em: string | null;
 	privacidade_aceita_em: string | null;
-	preferencias: Record<string, unknown>; // jsonb (substitui config_ui)
+	preferencias: PreferenciasUsuario; // jsonb
 	created_at: string;
 	updated_at: string;
 }
