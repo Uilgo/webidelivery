@@ -8,6 +8,11 @@
  *   Quando type="password", o ícone direito é substituído automaticamente
  *   pelo toggle de visibilidade (olho), ignorando iconRight.
  *
+ * Formatação automática:
+ *   - format="currency": formata como moeda BRL (R$ 1.234,56) enquanto digita.
+ *     O v-model recebe/emite o valor numérico (number).
+ *     Internamente exibe o valor formatado e converte no input/blur.
+ *
  * Estados visuais:
  *   - padrão:   borda neutra
  *   - error:    borda vermelha
@@ -15,6 +20,7 @@
  *
  * Props:
  *   - type:        tipo do input HTML (padrão: "text")
+ *   - format:      formatação especial ("currency" | undefined)
  *   - placeholder: texto de placeholder
  *   - disabled:    desabilita o campo
  *   - error:       ativa estado de erro visual
@@ -31,14 +37,15 @@
  *
  * Uso:
  *   <UiInput v-model="q" icon-left="lucide:search" placeholder="Buscar..." />
+ *   <UiInput v-model="preco" format="currency" icon-left="lucide:dollar-sign" />
  *   <UiInput v-model="senha" type="password" label="Senha" forgot-href="/recuperar" />
- *   <UiInput v-model="senha" type="password" label="Senha" @forgot="abrirModal" />
  *   <UiInput v-model="email" type="email" :error="true" hint="E-mail inválido" />
  */
 
 const props = withDefaults(
 	defineProps<{
 		type?: string;
+		format?: "currency";
 		placeholder?: string;
 		disabled?: boolean;
 		error?: boolean;
@@ -57,6 +64,7 @@ const props = withDefaults(
 	}>(),
 	{
 		type: "text",
+		format: undefined,
 		disabled: false,
 		error: false,
 		forgotLabel: "Esqueci a senha",
@@ -78,22 +86,74 @@ const props = withDefaults(
 defineEmits<{ forgot: [] }>();
 
 // v-model nativo via defineModel (Vue 3.4+)
+// Para format="currency", o modelo externo é number; internamente exibimos string formatada
 const model = defineModel<string | number>();
 
-// Controla visibilidade da senha no toggle
+// ─── Formatação de moeda ──────────────────────────────────────────────────────
+
+// Converte string formatada (ex: "1.234,56") para número (1234.56)
+function parseCurrencyInline(value: string): number {
+	if (!value || typeof value !== "string") return 0;
+	const cleaned = value.replace(/[^\d,]/g, "");
+	const normalized = cleaned.replace(",", ".");
+	return parseFloat(normalized) || 0;
+}
+
+// Formata número como moeda BRL sem símbolo (ex: 1234.56 → "1.234,56")
+function formatCurrencyInline(value: number): string {
+	return new Intl.NumberFormat("pt-BR", {
+		style: "currency",
+		currency: "BRL",
+	})
+		.format(value)
+		.replace("R$", "")
+		.trim();
+}
+
+// Valor exibido no input (string formatada quando format="currency")
+const displayValue = ref("");
+
+// Inicializa o display quando o modelo externo muda
+watch(
+	() => model.value,
+	(val) => {
+		if (props.format !== "currency") return;
+		const num = typeof val === "number" ? val : parseCurrencyInline(String(val ?? ""));
+		const current = parseCurrencyInline(displayValue.value);
+		if (num !== current) {
+			displayValue.value = num > 0 ? formatCurrencyInline(num) : "";
+		}
+	},
+	{ immediate: true },
+);
+
+function onCurrencyInput(e: Event) {
+	const raw = (e.target as HTMLInputElement).value;
+	displayValue.value = raw.replace(/[^\d,]/g, "");
+}
+
+function onCurrencyBlur() {
+	const num = parseCurrencyInline(displayValue.value);
+	displayValue.value = num > 0 ? formatCurrencyInline(num) : "";
+	model.value = num;
+}
+
+// ─── Senha ────────────────────────────────────────────────────────────────────
+
 const showPassword = ref(false);
 
-// Tipo efetivo do input — alterna entre "password" e "text" no toggle
 const inputType = computed(() => {
 	if (props.type !== "password") return props.type;
 	return showPassword.value ? "text" : "password";
 });
 
-// ID estável via useId() do Nuxt — evita hydration mismatch entre SSR e cliente
+// ─── ID ───────────────────────────────────────────────────────────────────────
+
 const inputId = useId();
 const effectiveId = computed(() => props.id ?? inputId);
 
-// Mapa de autocompletes padrão por tipo
+// ─── Autocomplete ─────────────────────────────────────────────────────────────
+
 const defaultAutocompletes: Record<string, string> = {
 	password: "current-password",
 	email: "email",
@@ -102,20 +162,19 @@ const defaultAutocompletes: Record<string, string> = {
 	text: "off",
 };
 
-// Autocomplete automático baseado no tipo se não for fornecido manualmente
 const effectiveAutocomplete = computed(() => {
 	if (props.autocomplete) return props.autocomplete;
 	return defaultAutocompletes[props.type] || undefined;
 });
 
-// Mapa de tamanhos do input alinhado com o botão
+// ─── Tamanhos ─────────────────────────────────────────────────────────────────
+
 const sizeClasses: Record<"sm" | "md" | "lg", string> = {
 	sm: "h-8 text-xs",
-	md: "h-10 text-sm", // 40px - Padrão
+	md: "h-10 text-sm",
 	lg: "h-12 text-base",
 };
 
-// Classes do wrapper
 const wrapperClasses = computed(() => [
 	"flex items-center w-full rounded border bg-input gap-2 transition-colors",
 	sizeClasses[props.size],
@@ -149,8 +208,30 @@ const wrapperClasses = computed(() => [
 				<slot name="prefix">{{ prefix }}</slot>
 			</span>
 
-			<!-- Campo de entrada -->
+			<!-- Campo de entrada — modo currency -->
 			<input
+				v-if="format === 'currency'"
+				:id="effectiveId"
+				:value="displayValue"
+				type="text"
+				inputmode="decimal"
+				:placeholder="placeholder ?? '0,00'"
+				:disabled="disabled"
+				autocomplete="off"
+				:aria-invalid="error"
+				:aria-describedby="hint ? `${effectiveId}-hint` : undefined"
+				:class="[
+					'text-foreground placeholder:text-muted-foreground h-full w-full min-w-0 flex-1 bg-transparent tabular-nums outline-none',
+					prefix || $slots.prefix ? 'pl-3' : iconLeft ? 'pl-1' : 'pl-4',
+					suffix || $slots.suffix ? 'pr-3' : iconRight ? 'pr-1' : 'pr-4',
+				]"
+				@input="onCurrencyInput"
+				@blur="onCurrencyBlur"
+			/>
+
+			<!-- Campo de entrada — modo padrão -->
+			<input
+				v-else
 				:id="effectiveId"
 				v-model="model"
 				:type="inputType"

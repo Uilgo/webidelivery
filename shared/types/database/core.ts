@@ -3,28 +3,26 @@
  *
  * Tipos de leitura (SELECT) para as tabelas:
  * roles, perfis, empresas, lojas
+ *
+ * Sincronizado com o banco real via MCP Supabase.
  */
 
-import type {
-	LojaConfigEntrega,
-	LojaConfigOperacao,
-	LojaConfigPagamentos,
-	LojaConfigTema,
-	LojaEndereco,
-	LojaHorario,
-} from "../jsonb";
-
 // =============================================
-// TABELA: roles (catálogo fixo de cargos)
+// TABELA: roles (catálogo fixo de 6 cargos)
 // =============================================
 
 export interface Role {
 	id: string;
+	slug: string; // 'admin_master', 'gerente_master', etc.
 	nome: string;
 	descricao: string | null;
-	painel: string; // 'master' | 'loja'
+	permissoes: string[]; // jsonb — array de slugs de permissão
+	painel: "master" | "loja";
 	nivel: number; // 1 = maior poder
+	acesso_total: boolean;
+	ativo: boolean;
 	created_at: string;
+	updated_at: string;
 }
 
 // =============================================
@@ -33,23 +31,24 @@ export interface Role {
 
 export interface Perfil {
 	id: string;
+	role_id: string; // FK → roles.id
+	permissoes_customizadas: Record<string, unknown> | null; // jsonb
 	empresa_id: string | null;
 	loja_id: string | null;
-	cargo: string; // admin_master, gerente_master, admin_loja, gerente_loja, staff_loja, entregador
 	nome: string;
-	sobrenome: string | null;
+	sobrenome: string;
 	email: string;
-	whatsapp: string | null;
 	avatar_url: string | null;
-	status: string; // ativo, inativo, suspenso, bloqueado
-	onboarding_status: string | null; // pendente, em_progresso, concluido (apenas admin_loja)
-	config_ui: Record<string, unknown>; // preferências de UI do painel
-	impersonation_ativo: boolean;
-	impersonation_por: string | null;
-	impersonation_cud_master_ativo: boolean;
+	telefone: string | null;
+	whatsapp: string | null;
+	is_demo: boolean;
+	status: string; // 'ativo', 'inativo', 'suspenso', 'bloqueado'
+	onboarding_status: string | null; // 'pendente', 'em_progresso', 'concluido'
+	senha_temporaria: boolean;
+	ultimo_acesso_em: string | null;
 	termos_aceitos_em: string | null;
 	privacidade_aceita_em: string | null;
-	ultimo_acesso_em: string | null;
+	preferencias: Record<string, unknown>; // jsonb (substitui config_ui)
 	created_at: string;
 	updated_at: string;
 }
@@ -60,13 +59,18 @@ export interface Perfil {
 
 export interface Empresa {
 	id: string;
-	nome_fantasia: string;
-	razao_social: string | null;
-	cnpj: string | null;
+	plano_id: string | null;
+	nome: string;
 	slug: string;
-	logo_url: string | null;
-	status: string; // ativa, suspensa, cancelada
-	config: Record<string, unknown>; // configurações gerais da empresa
+	status: string; // 'ativa', 'suspensa', 'cancelada'
+	dominio_personalizado: string | null;
+	dominio_ssl_ativo: boolean;
+	dominio_ssl_expira_em: string | null;
+	dominio_verificado_em: string | null;
+	configuracoes: Record<string, unknown>; // jsonb
+	impersonation_cud_master: boolean;
+	impersonation_cud_master_concedido_em: string | null;
+	impersonation_cud_master_concedido_por: string | null;
 	created_at: string;
 	updated_at: string;
 }
@@ -78,20 +82,36 @@ export interface Empresa {
 export interface Loja {
 	id: string;
 	empresa_id: string;
-	nome: string;
+	is_matriz: boolean;
+	nome_estabelecimento: string;
 	slug: string;
-	logo_url: string | null;
+	status: string; // 'rascunho', 'ativo', 'inativo', 'suspenso'
+	categoria: string | null;
+	descricao: string | null;
+	logo_light_url: string | null;
+	logo_dark_url: string | null;
+	banner_light_url: string | null;
+	banner_dark_url: string | null;
+	cpf: string | null;
+	cnpj: string | null;
 	telefone: string | null;
 	whatsapp: string | null;
 	email: string | null;
-	endereco: LojaEndereco;
-	horarios: LojaHorario[];
-	config_operacao: LojaConfigOperacao;
-	config_tema: LojaConfigTema;
-	config_pagamentos: LojaConfigPagamentos;
-	config_entrega: LojaConfigEntrega;
-	status: string; // ativo, inativo, suspenso
-	aberta_manualmente: boolean;
+	redes_sociais: Record<string, unknown>; // jsonb
+	endereco_rua: string | null;
+	endereco_numero: string | null;
+	endereco_complemento: string | null;
+	endereco_bairro: string | null;
+	endereco_cidade: string | null;
+	endereco_estado: string | null;
+	endereco_cep: string | null;
+	endereco_referencia: string | null;
+	aberto: boolean;
+	forcar_fechado: boolean;
+	horario_funcionamento: Record<string, unknown>; // jsonb
+	config_geral: Record<string, unknown>; // jsonb
+	config_tema: Record<string, unknown>; // jsonb
+	setup_status: Record<string, unknown>; // jsonb
 	created_at: string;
 	updated_at: string;
 }

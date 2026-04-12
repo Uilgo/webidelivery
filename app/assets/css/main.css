@@ -459,13 +459,17 @@ textarea:disabled,
 }
 
 /* Item do menu — padding-left fixo para centralizar ícone quando colapsado
-   Cálculo: (80px sidebar - 24px ícone) / 2 - 8px padding nav = 20px */
+   Cálculo: (80px sidebar - 24px ícone) / 2 = 28px
+   Mas subtraímos 8px do padding do nav (px-2), então: 28px - 8px = 20px */
 .sidebar-item {
 	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	padding-left: 1.25rem; /* 20px */
+	transition:
+		background-color 150ms ease,
+		color 150ms ease;
 }
 
 .sidebar-item-icon {
@@ -479,8 +483,8 @@ textarea:disabled,
 	white-space: nowrap;
 }
 
-/* Header do sidebar — centraliza logo (48px / h-12 w-12) quando colapsado
-   Cálculo: (80px - 48px) / 2 = 16px */
+/* Header do sidebar — centraliza logo quando colapsado
+   Cálculo: (80px - 48px logo) / 2 = 16px */
 .sidebar-header {
 	display: flex;
 	align-items: center;
@@ -489,15 +493,16 @@ textarea:disabled,
 	padding-right: 1rem; /* 16px */
 }
 
-/* Footer do sidebar — centraliza avatar (40px / size-md) quando colapsado
-   Largura disponível: 80px - 8px (p-2 left) - 8px (p-2 right) = 64px
-   Centralização: (64 - 40) / 2 = 12px */
+/* Footer do sidebar — centraliza avatar quando colapsado
+   Cálculo: (80px - 40px avatar) / 2 = 20px
+   Mas subtraímos 8px do padding do container (p-2), então: 20px - 8px = 12px */
 .sidebar-footer-btn {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	padding-left: 0.75rem; /* 12px */
 	padding-right: 0.75rem; /* 12px */
+	transition: background-color 150ms ease;
 }
 
 /* Transição do header — sincronizada com sidebar (500ms) */

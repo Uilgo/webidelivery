@@ -1,5 +1,12 @@
+<script setup lang="ts">
+/**
+ * / — Redirecionador raiz.
+ * Toda a lógica de redirecionamento está no 02.guard.global.ts.
+ */
+
+definePageMeta({ layout: false });
+</script>
+
 <template>
-	<div class="flex min-h-svh flex-col items-center justify-center">
-		<h1 class="text-3xl font-bold">Olá Mundo!</h1>
-	</div>
+	<div></div>
 </template>

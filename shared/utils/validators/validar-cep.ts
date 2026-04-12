@@ -1,4 +1,4 @@
-import { parseCEP } from "../formatters/formatar-cep.js";
+import { parseCEP } from "../formatters/formatar-cep";
 
 /**
  * Valida se o CEP é válido (8 dígitos numéricos)

@@ -13,6 +13,7 @@ export default defineNuxtConfig({
 		"@nuxt/fonts",
 		"@vueuse/nuxt",
 		"@nuxtjs/color-mode",
+		"nuxt-echarts",
 	],
 
 	css: ["~/assets/css/main.css"],
@@ -86,7 +87,7 @@ export default defineNuxtConfig({
 			include: undefined, // Todas as rotas exceto as do exclude
 			saveRedirectToCookie: false, // Não salvar - sempre vai pro dashboard apropriado
 		},
-		// Path para tipos TypeScript gerados do schema do Supabase
+		// Path para tipos TypeScript do schema do Supabase
 		types: "~~/shared/types/database.ts",
 	},
 
@@ -98,6 +99,12 @@ export default defineNuxtConfig({
 		storage: "cookie",
 		storageKey: "nuxt-color-mode", // Chave no cookie
 		dataValue: "theme", // Atributo data-theme no HTML
+	},
+
+	// Configuração do ECharts (tree-shaking — importa só o necessário)
+	echarts: {
+		charts: ["LineChart", "BarChart", "PieChart"],
+		components: ["GridComponent", "TooltipComponent", "LegendComponent", "TitleComponent"],
 	},
 
 	fonts: {
