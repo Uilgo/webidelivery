@@ -55,7 +55,7 @@ export const useNotificacoesStore = defineStore("notificacoes", () => {
 		try {
 			const supabase = useSupabaseClient();
 			const params: RpcMarcarNotificacaoLidaParams = { notificacao_id: id };
-			await supabase.rpc("rpc_marcar_notificacao_lida", params as never);
+			await supabase.rpc("fn_rpc_marcar_notificacao_lida", params as never);
 		} catch (e: unknown) {
 			console.error("[notificacoesStore] Erro ao marcar como lida:", e);
 			// Reverte em caso de erro
@@ -77,7 +77,7 @@ export const useNotificacoesStore = defineStore("notificacoes", () => {
 			if (!id) return;
 
 			const params: RpcMarcarTodasLidasParams = { perfil_id: id };
-			await supabase.rpc("rpc_marcar_todas_lidas", params as never);
+			await supabase.rpc("fn_rpc_marcar_todas_lidas", params as never);
 		} catch (e: unknown) {
 			console.error("[notificacoesStore] Erro ao marcar todas como lidas:", e);
 			await fetchNotificacoes(); // Reverte buscando do banco

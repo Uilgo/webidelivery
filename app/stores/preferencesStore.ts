@@ -79,7 +79,14 @@ export const usePreferencesStore = defineStore("preferences", () => {
 				const { data } = await supabase.from("perfis").select("*").eq("id", id).single();
 
 				const configUi: unknown = (data as Perfil | null)?.preferencias;
-				if (configUi && isValidPreferences(configUi)) {
+				const temDadosNoBanco =
+					configUi &&
+					typeof configUi === "object" &&
+					Object.keys(configUi).length > 0 &&
+					isValidPreferences(configUi);
+
+				if (temDadosNoBanco) {
+					// Banco tem dados válidos → usa como fonte de verdade
 					const merged: PreferenciasUsuario = { ...DEFAULT_PREFERENCES, ...configUi };
 					cookie.value = merged;
 					return;
@@ -112,7 +119,7 @@ export const usePreferencesStore = defineStore("preferences", () => {
 				p_preferencias: prefs as unknown as Record<string, unknown>,
 			};
 
-			await supabase.rpc("rpc_atualizar_preferencias", params as never);
+			await supabase.rpc("fn_rpc_atualizar_preferencias", params as never);
 		} catch (e: unknown) {
 			console.error("[preferencesStore] Erro ao sincronizar:", e);
 		} finally {
